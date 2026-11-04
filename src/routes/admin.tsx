@@ -88,7 +88,10 @@ async function uploadImage(file: File) {
   const path = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, "_")}`;
   const { error } = await supabase.storage.from("media").upload(path, file);
   if (error) throw error;
-  return supabase.storage.from("media").getPublicUrl(path).data.publicUrl;
+  // Bucket is private (workspace blocks public buckets); a long-lived signed link serves the logo.
+  const { data, error: e2 } = await supabase.storage.from("media").createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
+  if (e2) throw e2;
+  return data.signedUrl;
 }
 
 function Head({ title, action }: { title: string; action?: React.ReactNode }) {
