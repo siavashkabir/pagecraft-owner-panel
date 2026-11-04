@@ -19,7 +19,7 @@ const nav = [
 export function SiteLayout({ children }: { children: ReactNode }) {
   const { t, lang, setLang } = useLang();
   const [open, setOpen] = useState(false);
-  const { data: s = {} } = useQuery(settingsQuery);
+  const { data: s } = useQuery(settingsQuery);
   return (
     <div className="relative min-h-screen flex flex-col overflow-x-hidden">
       <ParticleBg />
@@ -42,7 +42,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
               <Languages className="h-4 w-4" />{lang === "fa" ? "EN" : "فا"}
             </Button>
             <Button asChild size="sm" className="hidden sm:inline-flex bg-gradient-primary text-primary-foreground shadow-glow rounded-full">
-              <a href={s.telegram_support || "https://t.me/Siavashska"} target="_blank" rel="noreferrer"><Send className="h-4 w-4" />{t("order")}</a>
+              <a href={s?.telegram_support || "https://t.me/Siavashska"} target="_blank" rel="noreferrer"><Send className="h-4 w-4" />{t("order")}</a>
             </Button>
             <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setOpen(!open)} aria-label="menu">
               {open ? <X /> : <Menu />}
@@ -66,16 +66,16 @@ export function SiteLayout({ children }: { children: ReactNode }) {
               <img src={logo.url} alt="" className="h-10 w-10" />
               <span dir="ltr" className="text-lg font-bold">SK<span className="text-gradient">.team</span></span>
             </div>
-            <p className="text-sm text-muted-foreground leading-7">{lang === "fa" ? s.hero_desc_fa : s.hero_desc_en}</p>
+            <p className="text-sm text-muted-foreground leading-7">{lang === "fa" ? s?.hero_desc_fa : s?.hero_desc_en}</p>
           </div>
           <div className="flex flex-col gap-2 text-sm">
             {nav.map((n) => <Link key={n.to} to={n.to} className="text-muted-foreground hover:text-primary">{t(n.k)}</Link>)}
           </div>
           <div className="grid grid-cols-2 gap-2 text-sm">
-            <Social href={s.telegram_support} icon={<Send className="h-4 w-4" />} label={t("support")} />
-            <Social href={s.telegram_channel} icon={<Megaphone className="h-4 w-4" />} label={t("channel")} />
-            <Social href={s.email ? `mailto:${s.email}` : undefined} icon={<Mail className="h-4 w-4" />} label={t("email")} />
-            <Social href={s.instagram} icon={<Instagram className="h-4 w-4" />} label={t("instagram")} />
+            <Social href={s?.telegram_support} icon={<Send className="h-4 w-4" />} label={t("support")} />
+            <Social href={s?.telegram_channel} icon={<Megaphone className="h-4 w-4" />} label={t("channel")} />
+            <Social href={s?.email ? `mailto:${s.email}` : undefined} icon={<Mail className="h-4 w-4" />} label={t("email")} />
+            <Social href={s?.instagram} icon={<Instagram className="h-4 w-4" />} label={t("instagram")} />
           </div>
         </div>
         <p className="text-center text-xs text-muted-foreground pb-8">© {new Date().getFullYear()} — {t("rights")}</p>
@@ -84,7 +84,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
   );
 }
 
-function Social({ href, icon, label }: { href?: string; icon: ReactNode; label: string }) {
+function Social({ href, icon, label }: { href?: string | undefined; icon: ReactNode; label: string }) {
   if (!href) return null;
   return (
     <a href={href} target="_blank" rel="noreferrer" className="glass rounded-xl px-3 py-2 flex items-center gap-2 hover:border-primary hover:text-primary transition-colors">

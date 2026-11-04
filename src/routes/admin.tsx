@@ -227,7 +227,7 @@ function ServicesTab() {
   );
 }
 
-const generalFields: [string, string, boolean?][] = [
+const generalFields: [keyof General, string, boolean?][] = [
   ["hero_title_fa", "عنوان اصلی صفحه (فارسی)"], ["hero_title_en", "Hero title (English)"],
   ["hero_desc_fa", "توضیح صفحه اصلی (فارسی)", true], ["hero_desc_en", "Hero description", true],
   ["about_fa", "متن درباره ما (فارسی)", true], ["about_en", "About text", true],
@@ -238,8 +238,9 @@ const generalFields: [string, string, boolean?][] = [
 function GeneralTab() {
   const qc = useQueryClient();
   const { data } = useQuery(settingsQuery);
-  const [g, setG] = useState<General>({});
+  const [g, setG] = useState<General | null>(null);
   useEffect(() => { if (data) setG(data); }, [data]);
+  if (!g) return null;
   const save = async () => {
     const { error } = await supabase.from("site_settings").upsert({ key: "general", value: g, updated_at: new Date().toISOString() });
     if (error) return toast.error(error.message);

@@ -4,14 +4,16 @@ import type { Database } from "@/integrations/supabase/types";
 
 export type Bot = Database["public"]["Tables"]["bots"]["Row"];
 export type Service = Database["public"]["Tables"]["services"]["Row"];
-export type General = Record<string, string>;
+export const generalKeys = ["hero_title_fa","hero_title_en","hero_desc_fa","hero_desc_en","about_fa","about_en","telegram_support","telegram_channel","email","instagram","website"] as const;
+export type General = Record<(typeof generalKeys)[number], string>;
+const emptyGeneral = Object.fromEntries(generalKeys.map((k) => [k, ""])) as General;
 
 export const settingsQuery = queryOptions({
   queryKey: ["settings", "general"],
   queryFn: async (): Promise<General> => {
     const { data, error } = await supabase.from("site_settings").select("value").eq("key", "general").maybeSingle();
     if (error) throw error;
-    return (data?.value as General) ?? {};
+    return { ...emptyGeneral, ...((data?.value as Partial<General>) ?? {}) };
   },
 });
 
