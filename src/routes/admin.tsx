@@ -38,7 +38,7 @@ function Admin() {
   useEffect(() => {
     const check = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return nav({ to: "/auth" });
+      if (!user) { nav({ to: "/auth" }); return; }
       setEmail(user.email ?? "");
       const { data } = await supabase.rpc("has_role", { _user_id: user.id, _role: "admin" });
       setState(data ? "ok" : "denied");
@@ -105,7 +105,7 @@ function BotsTab() {
   const del = async (b: Bot) => {
     if (!confirm(`حذف «${b.title_fa}»؟`)) return;
     const { error } = await supabase.from("bots").delete().eq("id", b.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     qc.invalidateQueries({ queryKey: ["bots"] });
   };
   return (
@@ -136,12 +136,12 @@ function BotDialog({ bot, onClose }: { bot: Partial<Bot>; onClose: () => void })
   const [busy, setBusy] = useState(false);
   const set = (k: keyof Bot, v: unknown) => setB({ ...b, [k]: v });
   const save = async () => {
-    if (!b.slug || !b.title_fa) return toast.error("نامک و عنوان فارسی الزامی است");
+    if (!b.slug || !b.title_fa) { toast.error("نامک و عنوان فارسی الزامی است"); return; }
     setBusy(true);
     const { id, created_at, ...rest } = b as Bot;
     const res = id ? await supabase.from("bots").update(rest).eq("id", id) : await supabase.from("bots").insert(rest as Bot);
     setBusy(false);
-    if (res.error) return toast.error(res.error.message);
+    if (res.error) { toast.error(res.error.message); return; }
     toast.success("ذخیره شد");
     qc.invalidateQueries({ queryKey: ["bots"] });
     onClose();
@@ -192,11 +192,11 @@ function ServicesTab() {
   const save = async (r: Partial<Service>) => {
     const { id, created_at, ...rest } = r as Service;
     const res = id ? await supabase.from("services").update(rest).eq("id", id) : await supabase.from("services").insert(rest);
-    if (res.error) return toast.error(res.error.message);
+    if (res.error) { toast.error(res.error.message); return; }
     toast.success("ذخیره شد"); qc.invalidateQueries({ queryKey: ["services"] });
   };
   const del = async (r: Partial<Service>) => {
-    if (!r.id) return setRows(rows.filter((x) => x !== r));
+    if (!r.id) { setRows(rows.filter((x) => x !== r)); return; }
     if (!confirm("حذف این خدمت؟")) return;
     await supabase.from("services").delete().eq("id", r.id); qc.invalidateQueries({ queryKey: ["services"] });
   };
@@ -243,7 +243,7 @@ function GeneralTab() {
   if (!g) return null;
   const save = async () => {
     const { error } = await supabase.from("site_settings").upsert({ key: "general", value: g, updated_at: new Date().toISOString() });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("تنظیمات ذخیره شد"); qc.invalidateQueries({ queryKey: ["settings"] });
   };
   return (

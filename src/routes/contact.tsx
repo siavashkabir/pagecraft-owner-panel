@@ -34,7 +34,7 @@ function Contact() {
     setBusy(true);
     const { error } = await supabase.from("messages").insert(f);
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(t("sent"));
     setF({ name: "", contact: "", body: "" });
   };

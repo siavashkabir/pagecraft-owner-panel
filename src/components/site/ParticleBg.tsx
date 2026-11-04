@@ -24,8 +24,9 @@ export function ParticleBg() {
         ctx.globalAlpha = 0.8; ctx.beginPath(); ctx.arc(p.x, p.y, 1.6, 0, 7); ctx.fill();
       }
       for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
-        const d = Math.hypot(pts[i].x - pts[j].x, pts[i].y - pts[j].y);
-        if (d < 130) { ctx.globalAlpha = (1 - d / 130) * 0.25; ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke(); }
+        const a = pts[i]!, b = pts[j]!;
+        const d = Math.hypot(a.x - b.x, a.y - b.y);
+        if (d < 130) { ctx.globalAlpha = (1 - d / 130) * 0.25; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
       }
       raf = requestAnimationFrame(tick);
     };
