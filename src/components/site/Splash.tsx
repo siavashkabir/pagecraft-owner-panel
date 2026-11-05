@@ -63,8 +63,8 @@ export function Splash() {
       }
       const step = W < 700 ? 4 : 3;
       for (let y = 0; y < S; y += step) for (let x = 0; x < S; x += step)
-        if ((d[(y * S + x) * 4 + 3] ?? 0) > 120)
-          pts.push({ x: Math.random() * W, y: Math.random() * H, tx: ox + (x / S) * size, ty: oy + (y / S) * size });
+        { const q = (y * S + x) * 4; if ((d[q + 3] ?? 0) > 120 && (d[q]! + d[q + 1]! + d[q + 2]!) > 300)
+          pts.push({ x: Math.random() * W, y: Math.random() * H, tx: ox + (x / S) * size, ty: oy + (y / S) * size }); }
     };
     const t0 = performance.now();
     let raf = 0;
