@@ -43,7 +43,7 @@ export function Splash() {
     const W = innerWidth, H = innerHeight;
     c.width = W * dpr; c.height = H * dpr; g.scale(dpr, dpr);
     const color = getComputedStyle(document.documentElement).getPropertyValue("--primary").trim() || "#3b82f6";
-    type P = { x: number; y: number; tx: number; ty: number };
+    type P = { x: number; y: number; tx: number; ty: number; lag: number };
     let pts: P[] = [];
     const img = new Image();
     img.crossOrigin = "anonymous";
@@ -61,10 +61,10 @@ export function Splash() {
           pts.push({ x: Math.random() * W, y: Math.random() * H, tx: W / 2 + Math.cos(a) * r, ty: H / 2 - 40 + Math.sin(a) * r }); }
         return;
       }
-      const step = W < 700 ? 4 : 3;
+      const step = W < 700 ? 7 : 6;
       for (let y = 0; y < S; y += step) for (let x = 0; x < S; x += step)
         { const q = (y * S + x) * 4; if ((d[q + 3] ?? 0) > 120 && (d[q]! + d[q + 1]! + d[q + 2]!) > 300)
-          pts.push({ x: Math.random() * W, y: Math.random() * H, tx: ox + (x / S) * size, ty: oy + (y / S) * size }); }
+          pts.push({ x: Math.random() * W, y: Math.random() * H, tx: ox + (x / S) * size, ty: oy + (y / S) * size, lag: Math.random() * 0.45 }); }
     };
     const t0 = performance.now();
     let raf = 0;
