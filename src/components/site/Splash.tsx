@@ -43,7 +43,7 @@ export function Splash() {
     const W = innerWidth, H = innerHeight;
     c.width = W * dpr; c.height = H * dpr; g.scale(dpr, dpr);
     const color = getComputedStyle(document.documentElement).getPropertyValue("--primary").trim() || "#3b82f6";
-    type P = { x: number; y: number; tx: number; ty: number };
+    type P = { x: number; y: number; tx: number; ty: number; lag: number };
     let pts: P[] = [];
     const img = new Image();
     img.crossOrigin = "anonymous";
@@ -58,35 +58,40 @@ export function Splash() {
       try { d = o.getImageData(0, 0, S, S).data; } catch { /* tainted canvas */ }
       if (!d) {
         for (let i = 0; i < 500; i++) { const a = (i / 500) * Math.PI * 2, r = size / 2 * (0.85 + (i % 3) * 0.05);
-          pts.push({ x: Math.random() * W, y: Math.random() * H, tx: W / 2 + Math.cos(a) * r, ty: H / 2 - 40 + Math.sin(a) * r }); }
+          pts.push({ x: Math.random() * W, y: Math.random() * H, tx: W / 2 + Math.cos(a) * r, ty: H / 2 - 40 + Math.sin(a) * r, lag: Math.random() * 0.45 }); }
         return;
       }
-      const step = W < 700 ? 4 : 3;
+      const step = W < 700 ? 7 : 6;
       for (let y = 0; y < S; y += step) for (let x = 0; x < S; x += step)
         { const q = (y * S + x) * 4; if ((d[q + 3] ?? 0) > 120 && (d[q]! + d[q + 1]! + d[q + 2]!) > 300)
-          pts.push({ x: Math.random() * W, y: Math.random() * H, tx: ox + (x / S) * size, ty: oy + (y / S) * size }); }
+          pts.push({ x: Math.random() * W, y: Math.random() * H, tx: ox + (x / S) * size, ty: oy + (y / S) * size, lag: Math.random() * 0.45 }); }
     };
     const t0 = performance.now();
     let raf = 0;
     const loop = (now: number) => {
       const t = now - t0;
-      const k = Math.min(1, t / 3000), e = 1 - Math.pow(1 - k, 3);
-      const pulse = t > 3000 ? 1 + Math.sin((t - 3000) / 250) * 0.04 : 1;
+      const k = Math.min(1, t / 3800);
+      const pulse = t > 3800 ? 1 + Math.sin((t - 3800) / 350) * 0.03 : 1;
       g.clearRect(0, 0, W, H);
       g.fillStyle = color; g.strokeStyle = color;
       const cx = W / 2, cy = H / 2 - 40;
-      const pos = pts.map((p) => ({
-        x: cx + (p.x + (p.tx - p.x) * e - cx) * pulse,
-        y: cy + (p.y + (p.ty - p.y) * e - cy) * pulse,
-      }));
-      g.globalAlpha = 0.15 * (1 - e * 0.6);
-      for (let i = 0; i < pos.length; i += 3)
-        for (let j = i + 3; j < Math.min(pos.length, i + 40); j += 3) {
+      // dew-like settle: each particle eases in gently with its own small delay
+      const pos = pts.map((p) => {
+        const pk = Math.max(0, Math.min(1, (k - p.lag) / (1 - p.lag)));
+        const e = 1 - Math.pow(1 - pk, 4);
+        return {
+          x: cx + (p.x + (p.tx - p.x) * e - cx) * pulse,
+          y: cy + (p.y + (p.ty - p.y) * e - cy) * pulse,
+        };
+      });
+      g.globalAlpha = 0.1 * (1 - k * 0.5);
+      for (let i = 0; i < pos.length; i += 4)
+        for (let j = i + 4; j < Math.min(pos.length, i + 32); j += 4) {
           const a = pos[i]!, b = pos[j]!; const dx = a.x - b.x, dy = a.y - b.y;
-          if (dx * dx + dy * dy < 900) { g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke(); }
+          if (dx * dx + dy * dy < 700) { g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke(); }
         }
-      g.globalAlpha = 1; g.shadowBlur = 8; g.shadowColor = color;
-      for (const p of pos) g.fillRect(p.x, p.y, 1.8, 1.8);
+      g.globalAlpha = 1; g.shadowBlur = 5; g.shadowColor = color;
+      for (const p of pos) g.fillRect(p.x, p.y, 1.2, 1.2);
       g.shadowBlur = 0;
       raf = requestAnimationFrame(loop);
     };
