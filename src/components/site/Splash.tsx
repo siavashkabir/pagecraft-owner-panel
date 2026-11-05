@@ -70,23 +70,28 @@ export function Splash() {
     let raf = 0;
     const loop = (now: number) => {
       const t = now - t0;
-      const k = Math.min(1, t / 3000), e = 1 - Math.pow(1 - k, 3);
-      const pulse = t > 3000 ? 1 + Math.sin((t - 3000) / 250) * 0.04 : 1;
+      const k = Math.min(1, t / 3800);
+      const pulse = t > 3800 ? 1 + Math.sin((t - 3800) / 350) * 0.03 : 1;
       g.clearRect(0, 0, W, H);
       g.fillStyle = color; g.strokeStyle = color;
       const cx = W / 2, cy = H / 2 - 40;
-      const pos = pts.map((p) => ({
-        x: cx + (p.x + (p.tx - p.x) * e - cx) * pulse,
-        y: cy + (p.y + (p.ty - p.y) * e - cy) * pulse,
-      }));
-      g.globalAlpha = 0.15 * (1 - e * 0.6);
-      for (let i = 0; i < pos.length; i += 3)
-        for (let j = i + 3; j < Math.min(pos.length, i + 40); j += 3) {
+      // dew-like settle: each particle eases in gently with its own small delay
+      const pos = pts.map((p) => {
+        const pk = Math.max(0, Math.min(1, (k - p.lag) / (1 - p.lag)));
+        const e = 1 - Math.pow(1 - pk, 4);
+        return {
+          x: cx + (p.x + (p.tx - p.x) * e - cx) * pulse,
+          y: cy + (p.y + (p.ty - p.y) * e - cy) * pulse,
+        };
+      });
+      g.globalAlpha = 0.1 * (1 - k * 0.5);
+      for (let i = 0; i < pos.length; i += 4)
+        for (let j = i + 4; j < Math.min(pos.length, i + 32); j += 4) {
           const a = pos[i]!, b = pos[j]!; const dx = a.x - b.x, dy = a.y - b.y;
-          if (dx * dx + dy * dy < 900) { g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke(); }
+          if (dx * dx + dy * dy < 700) { g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke(); }
         }
-      g.globalAlpha = 1; g.shadowBlur = 8; g.shadowColor = color;
-      for (const p of pos) g.fillRect(p.x, p.y, 1.8, 1.8);
+      g.globalAlpha = 1; g.shadowBlur = 5; g.shadowColor = color;
+      for (const p of pos) g.fillRect(p.x, p.y, 1.2, 1.2);
       g.shadowBlur = 0;
       raf = requestAnimationFrame(loop);
     };
