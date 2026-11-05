@@ -58,7 +58,7 @@ export function Splash() {
       try { d = o.getImageData(0, 0, S, S).data; } catch { /* tainted canvas */ }
       if (!d) {
         for (let i = 0; i < 500; i++) { const a = (i / 500) * Math.PI * 2, r = size / 2 * (0.85 + (i % 3) * 0.05);
-          pts.push({ x: Math.random() * W, y: Math.random() * H, tx: W / 2 + Math.cos(a) * r, ty: H / 2 - 40 + Math.sin(a) * r }); }
+          pts.push({ x: Math.random() * W, y: Math.random() * H, tx: W / 2 + Math.cos(a) * r, ty: H / 2 - 40 + Math.sin(a) * r, lag: Math.random() * 0.45 }); }
         return;
       }
       const step = W < 700 ? 7 : 6;
