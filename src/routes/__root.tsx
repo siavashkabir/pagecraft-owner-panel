@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 
 import { LangProvider } from "@/lib/lang";
 import { SiteLayout } from "@/components/site/Layout";
+import { Splash } from "@/components/site/Splash";
 import { Toaster } from "@/components/ui/sonner";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -128,6 +129,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <LangProvider>
         {bare ? <Outlet /> : <SiteLayout><Outlet /></SiteLayout>}
+        {!bare && <Splash />}
         <Toaster richColors position="top-center" />
       </LangProvider>
     </QueryClientProvider>
