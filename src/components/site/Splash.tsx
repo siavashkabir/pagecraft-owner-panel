@@ -56,7 +56,7 @@ export function Splash() {
       const size = Math.min(W, H) * 0.42, ox = W / 2 - size / 2, oy = H / 2 - size / 2 - 40;
       const step = W < 700 ? 4 : 3;
       for (let y = 0; y < S; y += step) for (let x = 0; x < S; x += step)
-        if (d[(y * S + x) * 4 + 3] > 120)
+        if ((d[(y * S + x) * 4 + 3] ?? 0) > 120)
           pts.push({ x: Math.random() * W, y: Math.random() * H, tx: ox + (x / S) * size, ty: oy + (y / S) * size });
     };
     const t0 = performance.now();
@@ -75,8 +75,8 @@ export function Splash() {
       g.globalAlpha = 0.15 * (1 - e * 0.6);
       for (let i = 0; i < pos.length; i += 3)
         for (let j = i + 3; j < Math.min(pos.length, i + 40); j += 3) {
-          const dx = pos[i].x - pos[j].x, dy = pos[i].y - pos[j].y;
-          if (dx * dx + dy * dy < 900) { g.beginPath(); g.moveTo(pos[i].x, pos[i].y); g.lineTo(pos[j].x, pos[j].y); g.stroke(); }
+          const a = pos[i]!, b = pos[j]!; const dx = a.x - b.x, dy = a.y - b.y;
+          if (dx * dx + dy * dy < 900) { g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke(); }
         }
       g.globalAlpha = 1; g.shadowBlur = 8; g.shadowColor = color;
       for (const p of pos) g.fillRect(p.x, p.y, 1.8, 1.8);

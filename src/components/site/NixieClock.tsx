@@ -20,7 +20,7 @@ export function NixieClock({ small, className = "" }: { small?: boolean; classNa
   return (
     <div dir="ltr" className={`flex items-center gap-0.5 ${className}`} aria-label={now}>
       {[...now].map((ch, i) =>
-        ch === ":" ? <span key={i} className="text-primary animate-pulse px-0.5">:</span> : <Digit key={i} v={ch} small={small} />,
+        ch === ":" ? <span key={i} className="text-primary animate-pulse px-0.5">:</span> : <Digit key={i} v={ch} small={!!small} />,
       )}
     </div>
   );
