@@ -7,6 +7,7 @@ import { useLang } from "@/lib/lang";
 import { settingsQuery } from "@/lib/content";
 import { Button } from "@/components/ui/button";
 import { ParticleBg } from "./ParticleBg";
+import { NixieClock } from "./NixieClock";
 
 const nav = [
   { to: "/", k: "home" },
@@ -37,6 +38,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
               </Link>
             ))}
           </nav>
+          <NixieClock className="hidden lg:flex" />
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={() => setLang(lang === "fa" ? "en" : "fa")} className="gap-1">
               <Languages className="h-4 w-4" />{lang === "fa" ? "EN" : "فا"}
@@ -78,6 +80,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
             <Social href={s?.instagram} icon={<Instagram className="h-4 w-4" />} label={t("instagram")} />
           </div>
         </div>
+        <NixieClock small className="lg:hidden justify-center mb-3" />
         <p className="text-center text-xs text-muted-foreground pb-8">© {new Date().getFullYear()} — {t("rights")}</p>
       </footer>
     </div>
