@@ -46,18 +46,25 @@ export function Splash() {
     type P = { x: number; y: number; tx: number; ty: number };
     let pts: P[] = [];
     const img = new Image();
+    img.crossOrigin = "anonymous";
     img.src = logo.url;
     img.onload = () => {
       const S = 120, off = document.createElement("canvas");
       off.width = off.height = S;
       const o = off.getContext("2d")!;
       o.drawImage(img, 0, 0, S, S);
-      const d = o.getImageData(0, 0, S, S).data;
       const size = Math.min(W, H) * 0.42, ox = W / 2 - size / 2, oy = H / 2 - size / 2 - 40;
+      let d: Uint8ClampedArray | null = null;
+      try { d = o.getImageData(0, 0, S, S).data; } catch { /* tainted canvas */ }
+      if (!d) {
+        for (let i = 0; i < 500; i++) { const a = (i / 500) * Math.PI * 2, r = size / 2 * (0.85 + (i % 3) * 0.05);
+          pts.push({ x: Math.random() * W, y: Math.random() * H, tx: W / 2 + Math.cos(a) * r, ty: H / 2 - 40 + Math.sin(a) * r }); }
+        return;
+      }
       const step = W < 700 ? 4 : 3;
       for (let y = 0; y < S; y += step) for (let x = 0; x < S; x += step)
-        if ((d[(y * S + x) * 4 + 3] ?? 0) > 120)
-          pts.push({ x: Math.random() * W, y: Math.random() * H, tx: ox + (x / S) * size, ty: oy + (y / S) * size });
+        { const q = (y * S + x) * 4; if ((d[q + 3] ?? 0) > 120 && (d[q]! + d[q + 1]! + d[q + 2]!) > 300)
+          pts.push({ x: Math.random() * W, y: Math.random() * H, tx: ox + (x / S) * size, ty: oy + (y / S) * size }); }
     };
     const t0 = performance.now();
     let raf = 0;
@@ -113,6 +120,7 @@ export function Splash() {
   return (
     <div className={`fixed inset-0 z-[100] bg-background transition-opacity duration-500 ${fade ? "opacity-0" : "opacity-100"}`}>
       <canvas ref={canvas} className="absolute inset-0 h-full w-full" />
+      <img src={logo.url} alt="SK Team" className="splash-logo absolute left-1/2 top-[calc(50%-40px)] w-[42vmin] -translate-x-1/2 -translate-y-1/2 drop-shadow-[0_0_30px_var(--primary)]" />
       <p dir="ltr" className="absolute inset-x-0 bottom-[22%] text-center font-mono text-xl md:text-3xl font-bold tracking-widest text-gradient">
         {typed}<span className="animate-pulse text-primary">▍</span>
       </p>
