@@ -15,6 +15,8 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "ربات‌های هوشمند تلگرام، طراحی وب‌سایت و اتوماسیون شبکه‌های اجتماعی توسط SK Team." },
       { property: "og:title", content: "SK Team | Travel to the Future" },
       { property: "og:description", content: "ربات‌های هوشمند تلگرام و طراحی سایت اختصاصی." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   loader: ({ context: { queryClient } }) =>
@@ -42,7 +44,7 @@ function Home() {
             <p className="text-lg text-muted-foreground leading-8 mb-8 max-w-xl">{fa ? s.hero_desc_fa : s.hero_desc_en}</p>
             <div className="flex flex-wrap gap-3">
               <Button asChild size="lg" className="rounded-full bg-gradient-primary text-primary-foreground shadow-glow">
-                <Link to="/bots">{t("viewBots")}</Link>
+                <Link to="/shop">{fa ? "مشاهده فروشگاه" : "Browse store"}</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-full">
                 <a href={s.telegram_support} target="_blank" rel="noreferrer"><Send className="h-4 w-4" />{t("order")}</a>

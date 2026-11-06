@@ -4,6 +4,7 @@ import { botsQuery } from "@/lib/content";
 import { useLang } from "@/lib/lang";
 import { BotCard } from "@/components/site/BotCard";
 import { PageHero } from "./about";
+import { Storefront } from "@/components/site/Storefront";
 
 export const Route = createFileRoute("/bots/")({
   head: () => ({
@@ -12,10 +13,12 @@ export const Route = createFileRoute("/bots/")({
       { name: "description", content: "موزیک پلیر، ویدیو پلیر، مدیریت گروه، ریکوردر ویس‌کال، گارد محتوا و ربات سلف." },
       { property: "og:title", content: "ربات‌های هوشمند SK Team" },
       { property: "og:description", content: "همه ربات‌های تلگرامی SK Team در یک جا." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   loader: ({ context: { queryClient } }) => queryClient.ensureQueryData(botsQuery),
-  component: Bots,
+  component: Storefront,
 });
 
 function Bots() {

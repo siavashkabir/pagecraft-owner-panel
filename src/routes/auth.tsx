@@ -13,6 +13,8 @@ export const Route = createFileRoute("/auth")({
       { name: "description", content: "ورود به پنل مدیریت SK Team" },
       { property: "og:title", content: "ورود مدیر SK Team" },
       { property: "og:description", content: "ورود به پنل مدیریت" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { name: "robots", content: "noindex" },
     ],
   }),

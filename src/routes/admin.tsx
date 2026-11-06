@@ -5,7 +5,9 @@ import { toast } from "sonner";
 import { Bot as BotIcon, Settings, Layers, Inbox, LogOut, ExternalLink, Plus, Trash2, Pencil, Upload } from "lucide-react";
 import logo from "@/assets/skteam_ring_transparent.png.asset.json";
 import { supabase } from "@/integrations/supabase/client";
-import { botsQuery, servicesQuery, settingsQuery, type Bot, type Service, type General } from "@/lib/content";
+import { adminBotsQuery, servicesQuery, settingsQuery, type Bot, type Service, type General } from "@/lib/content";
+import { platforms, categories, months } from "@/lib/store";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,6 +23,8 @@ export const Route = createFileRoute("/admin")({
       { name: "description", content: "پنل مدیریت محتوای سایت SK Team" },
       { property: "og:title", content: "پنل مدیریت SK Team" },
       { property: "og:description", content: "ویرایش محتوای سایت" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -100,7 +104,7 @@ function Head({ title, action }: { title: string; action?: React.ReactNode }) {
 
 function BotsTab() {
   const qc = useQueryClient();
-  const { data = [] } = useQuery(botsQuery);
+  const { data = [] } = useQuery(adminBotsQuery);
   const [edit, setEdit] = useState<Partial<Bot> | null>(null);
   const del = async (b: Bot) => {
     if (!confirm(`حذف «${b.title_fa}»؟`)) return;
@@ -110,7 +114,7 @@ function BotsTab() {
   };
   return (
     <>
-      <Head title="ربات‌ها" action={<Button onClick={() => setEdit({ features_fa: [], features_en: [], published: true, sort_order: data.length + 1, link: "https://t.me/Siavashska" })}><Plus className="h-4 w-4" />ربات جدید</Button>} />
+      <Head title="ربات‌ها" action={<Button onClick={() => setEdit({ features_fa: [], features_en: [], published: true, platform: "telegram", category: "tools", sort_order: data.length + 1, link: "https://t.me/Siavashska" })}><Plus className="h-4 w-4" />ربات جدید</Button>} />
       <div className="grid gap-3">
         {data.map((b) => (
           <div key={b.id} className="glass rounded-2xl p-4 flex items-center gap-4">
@@ -137,6 +141,7 @@ function BotDialog({ bot, onClose }: { bot: Partial<Bot>; onClose: () => void })
   const set = (k: keyof Bot, v: unknown) => setB({ ...b, [k]: v });
   const save = async () => {
     if (!b.slug || !b.title_fa) { toast.error("نامک و عنوان فارسی الزامی است"); return; }
+    if (months.some(m => { const price = b[`price_${m}`]; return price != null && (!Number.isSafeInteger(price) || price <= 0); })) { toast.error("قیمت باید عدد صحیح مثبت به تومان باشد"); return; }
     setBusy(true);
     const { id, created_at, ...rest } = b as Bot;
     const res = id ? await supabase.from("bots").update(rest).eq("id", id) : await supabase.from("bots").insert(rest as Bot);
@@ -171,6 +176,9 @@ function BotDialog({ bot, onClose }: { bot: Partial<Bot>; onClose: () => void })
             <F label="نامک آدرس (انگلیسی)"><Input dir="ltr" value={b.slug ?? ""} onChange={(e) => set("slug", e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))} /></F>
             <F label="لینک خرید"><Input dir="ltr" value={b.link ?? ""} onChange={(e) => set("link", e.target.value)} /></F>
             <F label="ترتیب نمایش"><Input type="number" value={b.sort_order ?? 0} onChange={(e) => set("sort_order", Number(e.target.value))} /></F>
+            <F label="پلتفرم"><Select value={b.platform ?? "telegram"} onValueChange={v => set("platform",v)}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{platforms.map(p => <SelectItem key={p.id} value={p.id}>{p.fa}</SelectItem>)}</SelectContent></Select></F>
+            <F label="دسته موضوعی"><Select value={b.category ?? "tools"} onValueChange={v => set("category",v)}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{categories.map(c => <SelectItem key={c.id} value={c.id}>{c.fa}</SelectItem>)}</SelectContent></Select></F>
+            {months.map(m => <F key={m} label={`قیمت اشتراک ${m.toLocaleString("fa")} ماهه (تومان)`}><Input type="number" min={1} step={1} value={b[`price_${m}`] ?? ""} onChange={e => set(`price_${m}`,e.target.value === "" ? null : Number(e.target.value))}/></F>)}
             <div className="flex items-center gap-3 pt-6"><Switch checked={b.published ?? true} onCheckedChange={(v) => set("published", v)} /><Label>نمایش در سایت</Label></div>
           </div>
           <Button disabled={busy} onClick={save} className="bg-gradient-primary text-primary-foreground">ذخیره</Button>

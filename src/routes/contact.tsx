@@ -18,6 +18,8 @@ export const Route = createFileRoute("/contact")({
       { name: "description", content: "سفارش ربات و مشاوره رایگان با SK Team از طریق تلگرام، ایمیل یا فرم تماس." },
       { property: "og:title", content: "تماس با SK Team" },
       { property: "og:description", content: "برای سفارش و مشاوره با ما در ارتباط باشید." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   loader: ({ context: { queryClient } }) => queryClient.ensureQueryData(settingsQuery),
