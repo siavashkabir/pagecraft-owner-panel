@@ -170,6 +170,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_public_site_setting: {
+        Args: { setting_key: string; setting_value: Json }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "user"

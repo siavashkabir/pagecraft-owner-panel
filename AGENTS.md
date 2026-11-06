@@ -8,3 +8,6 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep splash timing and easing in a browser-safe pure module so motion timing can be regression-tested without canvas.
+- Public site_settings reads must use the database allowlist predicate for both record key and JSON fields; all other settings stay admin-only to prevent future private settings leaking.
