@@ -17,7 +17,10 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as BotsIndexRouteImport } from './routes/bots.index'
 import { Route as BotsSlugRouteImport } from './routes/bots.$slug'
+import { Route as ServicesCustomBotRouteImport } from './routes/services_.custom-bot'
+import { Route as ServicesWebDesignRouteImport } from './routes/services_.web-design'
 import { Route as ShopIndexRouteImport } from './routes/shop.index'
+import { Route as ShopIdRouteImport } from './routes/shop.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -59,9 +62,24 @@ const BotsSlugRoute = BotsSlugRouteImport.update({
   path: '/bots/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServicesCustomBotRoute = ServicesCustomBotRouteImport.update({
+  id: '/services_/custom-bot',
+  path: '/services/custom-bot',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesWebDesignRoute = ServicesWebDesignRouteImport.update({
+  id: '/services_/web-design',
+  path: '/services/web-design',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopIndexRoute = ShopIndexRouteImport.update({
   id: '/shop/',
   path: '/shop/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopIdRoute = ShopIdRouteImport.update({
+  id: '/shop/$id',
+  path: '/shop/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -73,6 +91,9 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/services': typeof ServicesRoute
   '/bots/$slug': typeof BotsSlugRoute
+  '/services/custom-bot': typeof ServicesCustomBotRoute
+  '/services/web-design': typeof ServicesWebDesignRoute
+  '/shop/$id': typeof ShopIdRoute
   '/bots/': typeof BotsIndexRoute
   '/shop/': typeof ShopIndexRoute
 }
@@ -84,6 +105,9 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/services': typeof ServicesRoute
   '/bots/$slug': typeof BotsSlugRoute
+  '/services/custom-bot': typeof ServicesCustomBotRoute
+  '/services/web-design': typeof ServicesWebDesignRoute
+  '/shop/$id': typeof ShopIdRoute
   '/bots': typeof BotsIndexRoute
   '/shop': typeof ShopIndexRoute
 }
@@ -96,6 +120,9 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/services': typeof ServicesRoute
   '/bots/$slug': typeof BotsSlugRoute
+  '/services_/custom-bot': typeof ServicesCustomBotRoute
+  '/services_/web-design': typeof ServicesWebDesignRoute
+  '/shop/$id': typeof ShopIdRoute
   '/bots/': typeof BotsIndexRoute
   '/shop/': typeof ShopIndexRoute
 }
@@ -109,6 +136,9 @@ export interface FileRouteTypes {
     | '/contact'
     | '/services'
     | '/bots/$slug'
+    | '/services/custom-bot'
+    | '/services/web-design'
+    | '/shop/$id'
     | '/bots/'
     | '/shop/'
   fileRoutesByTo: FileRoutesByTo
@@ -120,6 +150,9 @@ export interface FileRouteTypes {
     | '/contact'
     | '/services'
     | '/bots/$slug'
+    | '/services/custom-bot'
+    | '/services/web-design'
+    | '/shop/$id'
     | '/bots'
     | '/shop'
   id:
@@ -131,6 +164,9 @@ export interface FileRouteTypes {
     | '/contact'
     | '/services'
     | '/bots/$slug'
+    | '/services_/custom-bot'
+    | '/services_/web-design'
+    | '/shop/$id'
     | '/bots/'
     | '/shop/'
   fileRoutesById: FileRoutesById
@@ -143,6 +179,9 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   ServicesRoute: typeof ServicesRoute
   BotsSlugRoute: typeof BotsSlugRoute
+  ServicesCustomBotRoute: typeof ServicesCustomBotRoute
+  ServicesWebDesignRoute: typeof ServicesWebDesignRoute
+  ShopIdRoute: typeof ShopIdRoute
   BotsIndexRoute: typeof BotsIndexRoute
   ShopIndexRoute: typeof ShopIndexRoute
 }
@@ -205,11 +244,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BotsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/services_/custom-bot': {
+      id: '/services_/custom-bot'
+      path: '/services/custom-bot'
+      fullPath: '/services/custom-bot'
+      preLoaderRoute: typeof ServicesCustomBotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services_/web-design': {
+      id: '/services_/web-design'
+      path: '/services/web-design'
+      fullPath: '/services/web-design'
+      preLoaderRoute: typeof ServicesWebDesignRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shop/': {
       id: '/shop/'
       path: '/shop'
       fullPath: '/shop/'
       preLoaderRoute: typeof ShopIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop/$id': {
+      id: '/shop/$id'
+      path: '/shop/$id'
+      fullPath: '/shop/$id'
+      preLoaderRoute: typeof ShopIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -223,6 +283,9 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   ServicesRoute: ServicesRoute,
   BotsSlugRoute: BotsSlugRoute,
+  ServicesCustomBotRoute: ServicesCustomBotRoute,
+  ServicesWebDesignRoute: ServicesWebDesignRoute,
+  ShopIdRoute: ShopIdRoute,
   BotsIndexRoute: BotsIndexRoute,
   ShopIndexRoute: ShopIndexRoute,
 }
