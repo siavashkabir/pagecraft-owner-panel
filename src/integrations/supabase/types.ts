@@ -16,12 +16,18 @@ export type Database = {
     Tables: {
       bots: {
         Row: {
+          category: string
           created_at: string
           features_en: string[]
           features_fa: string[]
           id: string
           image_url: string
           link: string
+          platform: string
+          price_1: number | null
+          price_12: number | null
+          price_3: number | null
+          price_6: number | null
           published: boolean
           short_en: string
           short_fa: string
@@ -31,12 +37,18 @@ export type Database = {
           title_fa: string
         }
         Insert: {
+          category?: string
           created_at?: string
           features_en?: string[]
           features_fa?: string[]
           id?: string
           image_url?: string
           link?: string
+          platform?: string
+          price_1?: number | null
+          price_12?: number | null
+          price_3?: number | null
+          price_6?: number | null
           published?: boolean
           short_en?: string
           short_fa?: string
@@ -46,12 +58,18 @@ export type Database = {
           title_fa?: string
         }
         Update: {
+          category?: string
           created_at?: string
           features_en?: string[]
           features_fa?: string[]
           id?: string
           image_url?: string
           link?: string
+          platform?: string
+          price_1?: number | null
+          price_12?: number | null
+          price_3?: number | null
+          price_6?: number | null
           published?: boolean
           short_en?: string
           short_fa?: string
