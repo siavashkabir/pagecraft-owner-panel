@@ -20,6 +20,8 @@ export const Route = createFileRoute("/services")({
       { name: "description", content: "ساخت ربات پیام‌رسان، طراحی وب‌سایت و مدیریت شبکه‌های اجتماعی." },
       { property: "og:title", content: "خدمات SK Team" },
       { property: "og:description", content: "ساخت ربات، طراحی سایت و مدیریت شبکه‌های اجتماعی." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   loader: ({ context: { queryClient } }) => Promise.all([queryClient.ensureQueryData(servicesQuery), queryClient.ensureQueryData(settingsQuery)]),

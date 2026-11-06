@@ -11,6 +11,8 @@ export const Route = createFileRoute("/about")({
       { name: "description", content: "آشنایی با تیم SK Team، برنامه‌نویسان متخصص ربات‌های هوشمند." },
       { property: "og:title", content: "درباره SK Team" },
       { property: "og:description", content: "تیمی از برنامه‌نویسان خلاق برای رشد کسب‌وکار شما." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   loader: ({ context: { queryClient } }) => queryClient.ensureQueryData(settingsQuery),
