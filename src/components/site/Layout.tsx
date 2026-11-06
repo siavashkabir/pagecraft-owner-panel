@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
-import { Menu, X, Send, Mail, Instagram, Megaphone, Languages } from "lucide-react";
+import { Menu, X, Send, Mail, Instagram, Megaphone, Languages, ShieldCheck, Headphones, BadgeCheck } from "lucide-react";
 import logo from "@/assets/skteam_ring_transparent.png.asset.json";
 import { useLang } from "@/lib/lang";
 import { settingsQuery } from "@/lib/content";
@@ -11,7 +11,7 @@ import { NixieClock } from "./NixieClock";
 
 const nav = [
   { to: "/", k: "home" },
-  { to: "/bots", k: "bots" },
+  { to: "/shop", k: "bots" },
   { to: "/services", k: "services" },
   { to: "/about", k: "about" },
   { to: "/contact", k: "contact" },
@@ -34,7 +34,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
             {nav.map((n) => (
               <Link key={n.to} to={n.to} activeOptions={{ exact: n.to === "/" }}
                 className="px-4 py-2 rounded-full text-sm text-muted-foreground hover:text-foreground transition-colors data-[status=active]:bg-primary/15 data-[status=active]:text-primary">
-                {t(n.k)}
+                {n.k === "bots" ? (lang === "fa" ? "فروشگاه" : "Store") : t(n.k)}
               </Link>
             ))}
           </nav>
@@ -61,7 +61,10 @@ export function SiteLayout({ children }: { children: ReactNode }) {
         )}
       </header>
       <main className="relative z-10 flex-1">{children}</main>
-      <footer className="relative z-10 border-t border-border mt-24">
+      <footer className="relative z-10 border-t border-border mt-16 bg-background">
+        <div className="mx-auto max-w-7xl px-4 py-7 grid sm:grid-cols-3 gap-6 border-b border-border">
+          {[[ShieldCheck, lang === "fa" ? "شرایط روشن پیش از پرداخت" : "Clear terms before payment"], [Headphones, lang === "fa" ? "ارتباط مستقیم با پشتیبانی" : "Direct support contact"], [BadgeCheck, lang === "fa" ? "تحویل طبق شرایط سفارش" : "Delivery under order terms"]].map(([Icon, text]) => { const I = Icon as typeof ShieldCheck; return <div key={String(text)} className="flex items-center gap-3 text-sm"><I className="text-accent h-6 w-6 shrink-0"/>{String(text)}</div>; })}
+        </div>
         <div className="mx-auto max-w-7xl px-4 py-12 grid gap-10 md:grid-cols-3">
           <div>
             <div className="flex items-center gap-2 mb-3">
@@ -79,6 +82,10 @@ export function SiteLayout({ children }: { children: ReactNode }) {
             <Social href={s?.email ? `mailto:${s.email}` : undefined} icon={<Mail className="h-4 w-4" />} label={t("email")} />
             <Social href={s?.instagram} icon={<Instagram className="h-4 w-4" />} label={t("instagram")} />
           </div>
+        </div>
+        <div className="mx-auto max-w-7xl px-4 pb-8 grid md:grid-cols-[1fr_auto] gap-6 items-center">
+          <p className="text-xs text-muted-foreground leading-7 max-w-2xl">{lang === "fa" ? "شرایط تحویل، فعال‌سازی اشتراک، پشتیبانی و بازگشت وجه پیش از پرداخت برای هر سفارش مشخص می‌شود. پرداخت آنلاین تا تکمیل تنظیمات غیرفعال است." : "Delivery, activation, support and refund terms are confirmed per order before payment. Online payments remain unavailable until configured."}</p>
+          <div data-enamad-slot className="min-h-20 w-44 border border-dashed border-border rounded-lg" aria-label={lang === "fa" ? "جایگاه نماد اعتماد؛ هنوز نمادی ثبت نشده" : "Trust seal slot; no official seal registered"}/>
         </div>
         <NixieClock small className="lg:hidden justify-center mb-3" />
         <p className="text-center text-xs text-muted-foreground pb-8">© {new Date().getFullYear()} — {t("rights")}</p>
