@@ -4,6 +4,7 @@ import { botsQuery } from "@/lib/content";
 import { useLang } from "@/lib/lang";
 import { BotCard } from "@/components/site/BotCard";
 import { PageHero } from "./about";
+import { Storefront } from "@/components/site/Storefront";
 
 export const Route = createFileRoute("/bots/")({
   head: () => ({
@@ -15,7 +16,7 @@ export const Route = createFileRoute("/bots/")({
     ],
   }),
   loader: ({ context: { queryClient } }) => queryClient.ensureQueryData(botsQuery),
-  component: Bots,
+  component: Storefront,
 });
 
 function Bots() {
