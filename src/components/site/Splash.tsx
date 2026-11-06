@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 import logo from "@/assets/skteam_ring_transparent.png.asset.json";
+import { Button } from "@/components/ui/button";
+import { assemblyProgress, SPLASH_DURATION } from "@/lib/splash-motion";
 
-const DURATION = 6800;
+const DURATION = SPLASH_DURATION;
 const TEXT = "Travel to the Future";
 
 export function Splash() {
@@ -37,61 +39,80 @@ export function Splash() {
       audio.current = { ctx, master };
     } catch { /* no audio */ }
 
-    const c = canvas.current!;
-    const g = c.getContext("2d")!;
+    const c = canvas.current;
+    const g = c?.getContext("2d");
+    if (!c || !g) return;
     const dpr = Math.min(devicePixelRatio || 1, 2);
     const W = innerWidth, H = innerHeight;
     c.width = W * dpr; c.height = H * dpr; g.scale(dpr, dpr);
-    const color = getComputedStyle(document.documentElement).getPropertyValue("--primary").trim() || "#3b82f6";
+    const color = getComputedStyle(document.documentElement).getPropertyValue("--primary").trim();
+    const size = Math.min(W, H) * 0.42;
+    const cx = W / 2, cy = H / 2 - 40;
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
     type P = { x: number; y: number; tx: number; ty: number; lag: number };
     let pts: P[] = [];
+    const add = (tx: number, ty: number) => {
+      const angle = Math.random() * Math.PI * 2;
+      const distance = size * (0.18 + Math.random() * 0.5);
+      pts.push({ x: tx + Math.cos(angle) * distance, y: ty + Math.sin(angle) * distance,
+        tx, ty, lag: Math.random() * 1000 });
+    };
+    // Analytical sampling guarantees an unbroken circle, including its top.
+    const ringCount = W < 700 ? 720 : 1100;
+    for (let i = 0; i < ringCount; i++) {
+      const angle = i / ringCount * Math.PI * 2;
+      add(cx + Math.cos(angle) * size * 0.464, cy + Math.sin(angle) * size * 0.464);
+    }
     const img = new Image();
     img.crossOrigin = "anonymous";
-    img.src = logo.url;
     img.onload = () => {
-      const S = 120, off = document.createElement("canvas");
+      const S = 180, off = document.createElement("canvas");
       off.width = off.height = S;
-      const o = off.getContext("2d")!;
+      const o = off.getContext("2d");
+      if (!o) return;
       o.drawImage(img, 0, 0, S, S);
-      const size = Math.min(W, H) * 0.42, ox = W / 2 - size / 2, oy = H / 2 - size / 2 - 40;
+      const ox = cx - size / 2, oy = cy - size / 2;
       let d: Uint8ClampedArray | null = null;
       try { d = o.getImageData(0, 0, S, S).data; } catch { /* tainted canvas */ }
-      if (!d) {
-        for (let i = 0; i < 500; i++) { const a = (i / 500) * Math.PI * 2, r = size / 2 * (0.85 + (i % 3) * 0.05);
-          pts.push({ x: Math.random() * W, y: Math.random() * H, tx: W / 2 + Math.cos(a) * r, ty: H / 2 - 40 + Math.sin(a) * r, lag: Math.random() * 0.45 }); }
-        return;
-      }
-      const step = W < 700 ? 7 : 6;
+      if (!d) return;
+      const step = W < 700 ? 4 : 3;
       for (let y = 0; y < S; y += step) for (let x = 0; x < S; x += step)
-        { const q = (y * S + x) * 4; if ((d[q + 3] ?? 0) > 120 && (d[q]! + d[q + 1]! + d[q + 2]!) > 300)
-          pts.push({ x: Math.random() * W, y: Math.random() * H, tx: ox + (x / S) * size, ty: oy + (y / S) * size, lag: Math.random() * 0.45 }); }
+        { const q = (y * S + x) * 4; if ((d[q + 3] ?? 0) > 120 && ((d[q] ?? 0) + (d[q + 1] ?? 0) + (d[q + 2] ?? 0)) > 300
+          && Math.hypot(x - S / 2, y - S / 2) < S * 0.43)
+          add(ox + (x / S) * size, oy + (y / S) * size); }
     };
+    img.src = logo.url;
     const t0 = performance.now();
     let raf = 0;
     const loop = (now: number) => {
       const t = now - t0;
-      const k = Math.min(1, t / 3800);
-      const pulse = t > 3800 ? 1 + Math.sin((t - 3800) / 350) * 0.03 : 1;
+      const k = Math.min(1, t / 5800);
+      const pulse = !reducedMotion && t > 5800 ? 1 + Math.sin((t - 5800) / 700) * 0.004 : 1;
       g.clearRect(0, 0, W, H);
       g.fillStyle = color; g.strokeStyle = color;
-      const cx = W / 2, cy = H / 2 - 40;
       // dew-like settle: each particle eases in gently with its own small delay
       const pos = pts.map((p) => {
-        const pk = Math.max(0, Math.min(1, (k - p.lag) / (1 - p.lag)));
-        const e = 1 - Math.pow(1 - pk, 4);
+        const e = reducedMotion ? 1 : assemblyProgress(t, p.lag);
         return {
           x: cx + (p.x + (p.tx - p.x) * e - cx) * pulse,
           y: cy + (p.y + (p.ty - p.y) * e - cy) * pulse,
         };
       });
-      g.globalAlpha = 0.1 * (1 - k * 0.5);
-      for (let i = 0; i < pos.length; i += 4)
-        for (let j = i + 4; j < Math.min(pos.length, i + 32); j += 4) {
-          const a = pos[i]!, b = pos[j]!; const dx = a.x - b.x, dy = a.y - b.y;
-          if (dx * dx + dy * dy < 700) { g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke(); }
+      g.globalAlpha = 0.025 * (1 - k);
+      g.lineWidth = 0.3;
+      for (let i = 0; i < pos.length; i += 12)
+        for (let j = i + 12; j < Math.min(pos.length, i + 36); j += 12) {
+          const a = pos[i], b = pos[j];
+          if (!a || !b) continue;
+          const dx = a.x - b.x, dy = a.y - b.y;
+          if (dx * dx + dy * dy < 500) { g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke(); }
         }
-      g.globalAlpha = 1; g.shadowBlur = 5; g.shadowColor = color;
-      for (const p of pos) g.fillRect(p.x, p.y, 1.2, 1.2);
+      g.globalAlpha = 0.65; g.shadowBlur = 1.5; g.shadowColor = color;
+      for (const p of pos) g.fillRect(p.x, p.y, 0.55, 0.55);
+      // A continuous hairline bridges subpixel gaps once the dust has settled.
+      g.globalAlpha = Math.max(0, Math.min(0.65, (t - 5200) / 900));
+      g.lineWidth = 0.65;
+      g.beginPath(); g.arc(cx, cy, size * 0.464 * pulse, 0, Math.PI * 2); g.stroke();
       g.shadowBlur = 0;
       raf = requestAnimationFrame(loop);
     };
@@ -112,7 +133,7 @@ export function Splash() {
     }, 3300 + i * 110)));
     timers.push(window.setTimeout(() => setFade(true), DURATION - 600));
     timers.push(window.setTimeout(() => setShow(false), DURATION));
-    return () => { cancelAnimationFrame(raf); timers.forEach(clearTimeout); audio.current?.ctx.close(); pts = []; };
+    return () => { cancelAnimationFrame(raf); timers.forEach(clearTimeout); img.onload = null; void audio.current?.ctx.close(); pts = []; };
   }, [show]);
 
   useEffect(() => {
@@ -124,15 +145,15 @@ export function Splash() {
   if (!show) return null;
   return (
     <div className={`fixed inset-0 z-[100] bg-background transition-opacity duration-500 ${fade ? "opacity-0" : "opacity-100"}`}>
-      <canvas ref={canvas} className="absolute inset-0 h-full w-full" />
       <img src={logo.url} alt="SK Team" className="splash-logo absolute left-1/2 top-[calc(50%-40px)] w-[42vmin] -translate-x-1/2 -translate-y-1/2 drop-shadow-[0_0_30px_var(--primary)]" />
-      <p dir="ltr" className="absolute inset-x-0 bottom-[22%] text-center font-mono text-xl md:text-3xl font-bold tracking-widest text-gradient">
+      <canvas ref={canvas} aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full" />
+      <p dir="ltr" className="absolute inset-x-0 bottom-[22%] text-center font-mono text-xl md:text-3xl font-bold text-gradient">
         {typed}<span className="animate-pulse text-primary">▍</span>
       </p>
-      <button onClick={() => setMuted(!muted)} aria-label="sound"
-        className="absolute bottom-5 end-5 glass rounded-full p-3 text-muted-foreground hover:text-primary">
+      <Button variant="ghost" size="icon" onClick={() => setMuted(!muted)} aria-label={muted ? "روشن کردن صدا" : "قطع صدا"} title={muted ? "روشن کردن صدا" : "قطع صدا"}
+        className="absolute bottom-5 end-5 glass rounded-full text-muted-foreground hover:text-primary">
         {muted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-      </button>
+      </Button>
     </div>
   );
 }
