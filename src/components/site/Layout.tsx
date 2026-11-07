@@ -119,7 +119,7 @@ function AccountMenu() {
     nav({ to: "/auth", replace: true });
   };
   if (isLoading) return <Button variant="ghost" size="sm" disabled aria-label={fa ? "بررسی حساب" : "Checking account"}><UserRound className="h-4 w-4" /></Button>;
-  if (!account) return <Button asChild variant="ghost" size="sm"><Link to="/auth"><LogIn className="h-4 w-4" /><span className="hidden xs:inline">{fa ? "ورود" : "Sign in"}</span></Link></Button>;
+  if (!account) return <Button asChild variant="ghost" size="sm"><Link to="/auth"><LogIn className="h-4 w-4" /><span className="hidden min-[400px]:inline">{fa ? "ورود" : "Sign in"}</span></Link></Button>;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild><Button variant="outline" size="sm"><UserRound className="h-4 w-4" /><span className="hidden sm:inline">{fa ? "حساب من" : "Account"}</span></Button></DropdownMenuTrigger>
