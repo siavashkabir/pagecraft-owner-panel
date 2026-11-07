@@ -19,7 +19,7 @@ export function BotCard({ bot }: { bot: Bot }) {
       </div>
       <h3 className="text-xl font-bold">{lang === "fa" ? bot.title_fa : bot.title_en}</h3>
       <p className="text-sm text-muted-foreground leading-7 flex-1">{lang === "fa" ? bot.short_fa : bot.short_en}</p>
-      <div className="border-t border-border pt-4 flex items-end justify-between gap-3"><div><span className="block text-xs text-muted-foreground mb-1">{price ? (fa ? "شروع از" : "From") : (fa ? "قیمت" : "Price")}</span><span className="font-bold">{price ? `${price.toLocaleString(lang)} ${fa ? "تومان" : "toman"}` : (fa ? "در انتظار تعیین قیمت" : "Pricing pending")}</span></div><ArrowLeft className="h-5 w-5 text-primary ltr:rotate-180 shrink-0"/></div>
+      <div className="border-t border-border pt-4 flex items-end justify-between gap-3">{price != null && <div><span className="block text-xs text-muted-foreground mb-1">{fa ? "شروع از" : "From"}</span><span className="font-bold">{price.toLocaleString(lang)} {fa ? "تومان" : "toman"}</span></div>}<ArrowLeft className="h-5 w-5 text-primary ltr:rotate-180 shrink-0 ms-auto"/></div>
     </Link>
   );
 }
