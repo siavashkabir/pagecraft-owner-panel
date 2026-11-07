@@ -14,3 +14,4 @@
 - Storefront reads use public server functions with RLS; the admin product query is separate so unpublished products remain editable without entering public caches.
 - Product taxonomy and subscription helpers live in a browser-safe module; both legacy bot URLs and shop URLs render the same product detail to preserve published links.
 - Project service requests use validated public server functions and the existing private messages inbox, keeping contact details restricted to admins.
+- Customer account pages live under the integration-managed `_authenticated` gate and use owner-scoped RLS reads, so public browsing stays open and private screens never rely on component-only guards.
