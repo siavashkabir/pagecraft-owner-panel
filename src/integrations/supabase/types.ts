@@ -80,6 +80,63 @@ export type Database = {
         }
         Relationships: []
       }
+      licenses: {
+        Row: {
+          bot_id: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          install_url: string | null
+          license_key: string
+          order_id: string | null
+          plan_months: number
+          starts_at: string
+          status: Database["public"]["Enums"]["license_status"]
+          user_id: string
+        }
+        Insert: {
+          bot_id?: string | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          install_url?: string | null
+          license_key?: string
+          order_id?: string | null
+          plan_months: number
+          starts_at?: string
+          status?: Database["public"]["Enums"]["license_status"]
+          user_id: string
+        }
+        Update: {
+          bot_id?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          install_url?: string | null
+          license_key?: string
+          order_id?: string | null
+          plan_months?: number
+          starts_at?: string
+          status?: Database["public"]["Enums"]["license_status"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "licenses_bot_id_fkey"
+            columns: ["bot_id"]
+            isOneToOne: false
+            referencedRelation: "bots"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "licenses_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           body: string
@@ -104,6 +161,65 @@ export type Database = {
           id?: string
           is_read?: boolean
           name?: string
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          bot_id: string | null
+          created_at: string
+          details: Json
+          id: string
+          plan_months: number | null
+          status: Database["public"]["Enums"]["order_status"]
+          type: Database["public"]["Enums"]["order_type"]
+          user_id: string
+        }
+        Insert: {
+          bot_id?: string | null
+          created_at?: string
+          details?: Json
+          id?: string
+          plan_months?: number | null
+          status?: Database["public"]["Enums"]["order_status"]
+          type: Database["public"]["Enums"]["order_type"]
+          user_id: string
+        }
+        Update: {
+          bot_id?: string | null
+          created_at?: string
+          details?: Json
+          id?: string
+          plan_months?: number | null
+          status?: Database["public"]["Enums"]["order_status"]
+          type?: Database["public"]["Enums"]["order_type"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_bot_id_fkey"
+            columns: ["bot_id"]
+            isOneToOne: false
+            referencedRelation: "bots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
         }
         Relationships: []
       }
@@ -195,6 +311,15 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      license_status: "active" | "expired" | "revoked"
+      order_status:
+        | "pending"
+        | "paid"
+        | "reviewing"
+        | "building"
+        | "delivered"
+        | "cancelled"
+      order_type: "subscription" | "custom_site" | "custom_bot"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -323,6 +448,16 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      license_status: ["active", "expired", "revoked"],
+      order_status: [
+        "pending",
+        "paid",
+        "reviewing",
+        "building",
+        "delivered",
+        "cancelled",
+      ],
+      order_type: ["subscription", "custom_site", "custom_bot"],
     },
   },
 } as const

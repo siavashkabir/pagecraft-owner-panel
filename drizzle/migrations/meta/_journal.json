@@ -29,6 +29,20 @@
       "when": 1793951456327,
       "tag": "0003_store_product_platforms_and_subscription_prices",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794009702357,
+      "tag": "0004_customer_accounts",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794009789848,
+      "tag": "0005_customer_account_grants",
+      "breakpoints": true
     }
   ]
 }

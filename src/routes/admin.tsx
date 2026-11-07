@@ -35,6 +35,7 @@ type Tab = "general" | "bots" | "services" | "messages";
 
 function Admin() {
   const nav = useNavigate();
+  const queryClient = useQueryClient();
   const [state, setState] = useState<"loading" | "ok" | "denied">("loading");
   const [email, setEmail] = useState("");
   const [tab, setTab] = useState<Tab>("bots");
@@ -48,15 +49,19 @@ function Admin() {
       setState(data ? "ok" : "denied");
     };
     check();
-    const { data: sub } = supabase.auth.onAuthStateChange((e) => { if (e === "SIGNED_OUT") nav({ to: "/auth" }); });
-    return () => sub.subscription.unsubscribe();
   }, [nav]);
+  const signOut = async () => {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    nav({ to: "/auth", replace: true });
+  };
 
   if (state === "loading") return <div className="min-h-screen grid place-items-center text-muted-foreground">...</div>;
   if (state === "denied")
     return (
       <div dir="rtl" className="min-h-screen grid place-items-center text-center px-4">
-        <div><p className="mb-4">این حساب دسترسی مدیریت ندارد.</p><Button onClick={() => supabase.auth.signOut()}>خروج</Button></div>
+        <div><p className="mb-4">این حساب دسترسی مدیریت ندارد.</p><Button onClick={signOut}>خروج</Button></div>
       </div>
     );
 
@@ -74,7 +79,7 @@ function Admin() {
         ))}
         <div className="md:mt-auto flex md:flex-col gap-2">
           <Link to="/" className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm text-muted-foreground hover:bg-sidebar-accent whitespace-nowrap"><ExternalLink className="h-4 w-4" />مشاهده سایت</Link>
-          <button onClick={() => supabase.auth.signOut()} className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm text-destructive hover:bg-sidebar-accent whitespace-nowrap"><LogOut className="h-4 w-4" />خروج</button>
+          <button onClick={signOut} className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm text-destructive hover:bg-sidebar-accent whitespace-nowrap"><LogOut className="h-4 w-4" />خروج</button>
           <p className="hidden md:block text-xs text-muted-foreground px-4 truncate" dir="ltr">{email}</p>
         </div>
       </aside>
