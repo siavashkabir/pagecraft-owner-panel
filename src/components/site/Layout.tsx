@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ParticleBg } from "./ParticleBg";
 import { NixieClock } from "./NixieClock";
+import { CartIcon } from "./CartIcon";
 
 const nav = [
   { to: "/", k: "home" },
@@ -42,6 +43,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
           </nav>
           <NixieClock className="hidden lg:flex" />
           <div className="flex items-center gap-2">
+            <CartIcon />
             <AccountMenu />
             <Button variant="ghost" size="sm" onClick={() => setLang(lang === "fa" ? "en" : "fa")} className="gap-1">
               <Languages className="h-4 w-4" />{lang === "fa" ? "EN" : "فا"}
