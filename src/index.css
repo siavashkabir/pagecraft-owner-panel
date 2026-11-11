@@ -88,3 +88,63 @@ html, body, #root {
     max-width: 100% !important;
   }
 }
+
+/* --- THE ULTIMATE MOBILE OVERFLOW FIX --- */
+@media (max-width: 768px) {
+  /* ۱. قفل کردن عرض کل صفحه */
+  html, body, #root, .min-h-screen {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    position: relative;
+  }
+
+  /* ۲. جلوگیری از کشیده شدن (بیرون زدن) همه عناصر در حالت Flex و Grid */
+  /* این دستور جادویی باعث می‌شود کارت‌ها و متن‌ها به جای پهن کردن صفحه، در خودشان بشکنند */
+  * {
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* ۳. اصلاح منوی کناری (Sidebar) در پنل ادمین */
+  /* اگر منوی ادمین در موبایل ثابت است، آن را مخفی می‌کنیم تا روی محتوا نیاید */
+  aside, .sidebar {
+    display: none !important; /* یا اگر دکمه همبرگری دارید، به حالت کشویی تغییر دهید */
+  }
+  
+  main {
+    width: 100% !important;
+    padding: 8px !important; /* کم کردن حاشیه‌های اضافی */
+  }
+
+  /* ۴. اسکرول افقی برای تب‌های هدر ادمین (ربات‌ها، خدمات و...) */
+  .tabs, .tab-list, [role="tablist"] {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    justify-content: flex-start !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ۵. اصلاح نهایی مدال (Dialog) */
+  [role="dialog"] {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 95vw !important;
+    max-width: 95vw !important;
+    max-height: 85vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 16px !important;
+    z-index: 99999 !important;
+  }
+  
+  [role="dialog"] form, 
+  [role="dialog"] .grid {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+}
