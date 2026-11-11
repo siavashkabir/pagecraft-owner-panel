@@ -171,7 +171,7 @@ function BotDialog({ bot, onClose }: { bot: Partial<Bot>; onClose: () => void })
               }} />
             </label>
           </div>
-          <div className="grid sm:grid-cols-2 gap-3">
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-3">
             <F label="عنوان فارسی"><Input value={b.title_fa ?? ""} onChange={(e) => set("title_fa", e.target.value)} /></F>
             <F label="Title (English)"><Input dir="ltr" value={b.title_en ?? ""} onChange={(e) => set("title_en", e.target.value)} /></F>
             <F label="توضیح کوتاه فارسی"><Textarea value={b.short_fa ?? ""} onChange={(e) => set("short_fa", e.target.value)} /></F>
@@ -219,7 +219,7 @@ function ServicesTab() {
       <Head title="خدمات" action={<Button onClick={() => setRows([...rows, { icon: "Sparkles", sort_order: rows.length + 1, title_fa: "", title_en: "", desc_fa: "", desc_en: "" }])}><Plus className="h-4 w-4" />خدمت جدید</Button>} />
       <div className="grid gap-4">
         {rows.map((r, i) => (
-          <div key={r.id ?? i} className="glass rounded-2xl p-5 grid sm:grid-cols-2 gap-3">
+          <div key={r.id ?? i} className="glass rounded-2xl p-5 grid sm:grid-cols-1 md:grid-cols-2 gap-3">
             <F label="عنوان فارسی"><Input value={r.title_fa} onChange={(e) => upd(i, "title_fa", e.target.value)} /></F>
             <F label="Title"><Input dir="ltr" value={r.title_en} onChange={(e) => upd(i, "title_en", e.target.value)} /></F>
             <F label="توضیح فارسی"><Textarea value={r.desc_fa} onChange={(e) => upd(i, "desc_fa", e.target.value)} /></F>
@@ -262,7 +262,7 @@ function GeneralTab() {
   return (
     <>
       <Head title="تنظیمات و متن‌ها" action={<Button onClick={save}>ذخیره تغییرات</Button>} />
-      <div className="glass rounded-2xl p-6 grid sm:grid-cols-2 gap-4">
+      <div className="glass rounded-2xl p-6 grid sm:grid-cols-1 md:grid-cols-2 gap-4">
         {generalFields.map(([k, l, long]) => (
           <F key={k} label={l}>
             {long ? <Textarea rows={5} dir={k.endsWith("_en") ? "ltr" : "rtl"} value={g[k] ?? ""} onChange={(e) => setG({ ...g, [k]: e.target.value })} />
