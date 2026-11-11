@@ -61,14 +61,14 @@ export function ProductDetail({ slug }: { slug: string }) {
             ))}
           </div>
           
-          {true && (
+          {price != null && (
             <div aria-live="polite" className="py-7">
               <p className="text-sm text-muted-foreground mb-2">{fa ? "قیمت کل اشتراک" : "Total subscription price"}</p>
               <p className="text-2xl font-bold">{price.toLocaleString(lang)} {fa ? "تومان" : "toman"}</p>
             </div>
           )}
           
-          {true && (
+          {price != null && (
             <Button onClick={handleAddToCart} className="w-full bg-green-500 hover:bg-green-400 text-black font-bold" size="lg">
               <ShoppingBag className="h-4 w-4" />
               {fa ? "افزودن به سبد خرید" : "Add to cart"}
